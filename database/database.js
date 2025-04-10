@@ -29,25 +29,25 @@ export const insertClockIn = async (name) => {
 
 // Update clock-out time for an employee
 export const updateClockOut = async (name) => {
-    const now = new Date().toISOString();
-  
-    // Step 1: Get the latest clock-in entry with no clock-out
-    const row = await db.getFirstAsync(
-      `SELECT id FROM timesheets
+  const now = new Date().toISOString();
+
+  // Step 1: Get the latest clock-in entry with no clock-out
+  const row = await db.getFirstAsync(
+    `SELECT id FROM timesheets
        WHERE employee_name = ? AND clock_out IS NULL
        ORDER BY id DESC LIMIT 1;`,
-      [name]
+    [name]
+  );
+
+  if (row && row.id) {
+    // Step 2: Update that entry by ID
+    await db.runAsync(
+      `UPDATE timesheets SET clock_out = ? WHERE id = ?;`,
+      [now, row.id]
     );
-  
-    if (row && row.id) {
-      // Step 2: Update that entry by ID
-      await db.runAsync(
-        `UPDATE timesheets SET clock_out = ? WHERE id = ?;`,
-        [now, row.id]
-      );
-    } else {
-      console.log('No open clock-in found for', name);
-    }
+  } else {
+    console.log('No open clock-in found for', name);
+  }
 };
 
 // Get timesheets for a specific employee or all employees

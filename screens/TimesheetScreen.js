@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Button, Alert, StyleSheet } from 'react-native';
 import { getTimesheets, deleteAllTimesheets } from '../database/database';
 import { formatTimestamp, calculateDuration } from '../assets/Utility';
+import timesheetScreenStyles from '../styles/timesheetScreenStyles';
 
 export default function TimesheetScreen({ route }) {
   const { name } = route.params;
@@ -41,16 +42,16 @@ export default function TimesheetScreen({ route }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>
+    <View style={timesheetScreenStyles.container}>
+      <Text style={timesheetScreenStyles.title}>
         {name === 'ALL' ? 'All Timesheets' : `${name}'s Timesheet`}
       </Text>
       <FlatList
         data={entries}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.entry}>
-            <Text style={styles.entryText}> 👷 {item.employee_name} </Text>
+          <View style={timesheetScreenStyles.entry}>
+            <Text style={timesheetScreenStyles.entryText}> 👷 {item.employee_name} </Text>
             <Text>🕐 In: {formatTimestamp(item.clock_in)}</Text>
             <Text>🕔 Out: {formatTimestamp(item.clock_out)}</Text>
             <Text>Hours: {calculateDuration(item.clock_in, item.clock_out)}</Text>
@@ -67,10 +68,3 @@ export default function TimesheetScreen({ route }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10 },
-  entry: { padding: 10, marginBottom: 10, backgroundColor: '#eee', borderRadius: 8 },
-  entryText: { fontWeight: 'bold' },
-});
